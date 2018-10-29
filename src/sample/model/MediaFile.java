@@ -1,4 +1,4 @@
-package sample;
+package sample.model;
 
 import javafx.beans.property.SimpleStringProperty;
 
@@ -6,13 +6,32 @@ import java.util.List;
 
 public class MediaFile {
 
+    private Long id;
     private SimpleStringProperty name = new SimpleStringProperty();
     private SimpleStringProperty filePath = new SimpleStringProperty();
     private SimpleStringProperty comment = new SimpleStringProperty();
     private MediaFileType mediaFileType;
-    private List<Category> category;
+    private List<Category> categories;
 
     MediaFile() {
+    }
+
+    /**
+     * Get id
+     *
+     * @return Long
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Set id
+     *
+     * @param id id
+     */
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     /**
@@ -29,7 +48,7 @@ public class MediaFile {
      *
      * @param name name
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name.set(name);
     }
 
@@ -47,7 +66,7 @@ public class MediaFile {
      *
      * @param filePath filePath
      */
-    public void setFilePath(String filePath) {
+    public void setFilePath(final String filePath) {
         this.filePath.set(filePath);
     }
 
@@ -65,7 +84,7 @@ public class MediaFile {
      *
      * @param mediaFileType mediaFileType
      */
-    public void setMediaFileType(MediaFileType mediaFileType) {
+    public void setMediaFileType(final MediaFileType mediaFileType) {
         this.mediaFileType = mediaFileType;
     }
 
@@ -83,27 +102,28 @@ public class MediaFile {
      *
      * @param comment comment
      */
-    public void setComment(String comment) {
+    public void setComment(final String comment) {
         this.comment.set(comment);
     }
 
     /**
-     * Get category
+     * Get categories
      *
      * @return List of Category
      */
-    public List<Category> getCategory() {
-        return category;
+    public List<Category> getCategories() {
+        return categories;
     }
 
     /**
      * Creates a string from a list of categories attached to the media file
+     *
      * @return String
      */
     public String getCategoryListDescription() {
-        if (category != null && !category.isEmpty()) {
+        if (categories != null && !categories.isEmpty()) {
             final StringBuilder sb = new StringBuilder();
-            category.forEach(category1 -> sb.append(category1.getDescription()).append(" "));
+            categories.forEach(category1 -> sb.append(category1.getDescription()).append(" "));
             return sb.toString();
         } else {
             return "";
@@ -111,12 +131,12 @@ public class MediaFile {
     }
 
     /**
-     * Set category
+     * Set categories
      *
-     * @param category List of Category
+     * @param categories List of Category
      */
-    public void setCategory(List<Category> category) {
-        this.category = category;
+    public void setCategories(final List<Category> categories) {
+        this.categories = categories;
     }
 
     /**
@@ -143,11 +163,12 @@ public class MediaFile {
     @Override
     public String toString() {
         return "MediaFile{" +
-                "name=" + name +
+                "id=" + id +
+                ", name=" + name +
                 ", filePath=" + filePath +
                 ", comment=" + comment +
                 ", mediaFileType=" + mediaFileType +
-                ", category=" + category +
+                ", categories=" + categories +
                 '}';
     }
 }
