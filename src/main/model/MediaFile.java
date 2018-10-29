@@ -1,4 +1,4 @@
-package sample.model;
+package main.model;
 
 import javafx.beans.property.SimpleStringProperty;
 
@@ -11,9 +11,9 @@ public class MediaFile {
     private SimpleStringProperty filePath = new SimpleStringProperty();
     private SimpleStringProperty comment = new SimpleStringProperty();
     private MediaFileType mediaFileType;
-    private List<Category> categories;
+    private List<String> categories;
 
-    MediaFile() {
+    public MediaFile() {
     }
 
     /**
@@ -111,7 +111,7 @@ public class MediaFile {
      *
      * @return List of Category
      */
-    public List<Category> getCategories() {
+    public List<String> getCategories() {
         return categories;
     }
 
@@ -123,7 +123,7 @@ public class MediaFile {
     public String getCategoryListDescription() {
         if (categories != null && !categories.isEmpty()) {
             final StringBuilder sb = new StringBuilder();
-            categories.forEach(category1 -> sb.append(category1.getDescription()).append(" "));
+            categories.forEach(category1 -> sb.append(category1).append(" "));
             return sb.toString();
         } else {
             return "";
@@ -135,7 +135,7 @@ public class MediaFile {
      *
      * @param categories List of Category
      */
-    public void setCategories(final List<Category> categories) {
+    public void setCategories(final List<String> categories) {
         this.categories = categories;
     }
 

@@ -1,4 +1,4 @@
-package sample.cells;
+package main.cells;
 
 public class EditableTextField {
 }

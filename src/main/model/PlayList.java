@@ -1,7 +1,6 @@
-package sample.model;
+package main.model;
 
 import javafx.beans.property.SimpleStringProperty;
-import sample.model.MediaFile;
 
 import java.util.List;
 

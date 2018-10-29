@@ -1,9 +1,12 @@
-package sample.model;
+package main.model;
 
 public class Image {
 
     private String fileName;
     private String filePath;
+
+    public Image() {
+    }
 
     public String getFileName() {
         return fileName;

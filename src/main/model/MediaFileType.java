@@ -1,4 +1,4 @@
-package sample.model;
+package main.model;
 
 public enum MediaFileType {
 

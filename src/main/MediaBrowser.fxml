@@ -1,0 +1,114 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.GridPane?>
+<VBox fx:controller="main.MediaBrowser"
+      xmlns:fx="http://javafx.com/fxml" stylesheets="@MediaBrowser.css">
+    <padding>
+        <Insets top="10" bottom="10" left="10" right="10"/>
+    </padding>
+
+    <GridPane hgap="10" vgap="10">
+        <!-- First row -->
+        <Label style="-fx-font-weight: bold" text="Media Browser" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="searchTextField" promptText="Search..." GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <!-- Second row -->
+        <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <VBox>
+                <padding>
+                    <Insets right="150"/>
+                </padding>
+                <Label text=" "/>
+            </VBox>
+        </HBox>
+
+        <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <VBox>
+                <padding>
+                    <Insets right="25"/>
+                </padding>
+                <Button fx:id="showAllButton" text="Show all"/>
+            </VBox>
+            <Label fx:id="playListTitle"/>
+        </HBox>
+
+        <!-- Third row -->
+        <HBox GridPane.columnIndex="0" GridPane.rowIndex="2">
+            <TabPane>
+                <Tab fx:id="playListTab" text="Play lists" closable="false">
+                    <VBox>
+                        <HBox>
+                            <padding>
+                                <Insets top="5" bottom="5"/>
+                            </padding>
+                            <Button fx:id="addPlayListButton" text="+"/>
+                        </HBox>
+                        <TableView fx:id="playListTableView" HBox.hgrow="NEVER">
+                            <columns>
+                                <TableColumn text="Play lists" prefWidth="220">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="name"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+                <Tab fx:id="categoriesTab" text="Categories" closable="false">
+                    <VBox>
+                        <HBox>
+                            <padding>
+                                <Insets top="5" bottom="5"/>
+                            </padding>
+                            <Button fx:id="addCategoryButton" text="+"/>
+                        </HBox>
+                        <TableView fx:id="categoryTableView" HBox.hgrow="NEVER">
+                            <columns>
+                                <TableColumn text="Categories" prefWidth="220">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="name"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                            </columns>
+                        </TableView>
+
+                    </VBox>
+                </Tab>
+            </TabPane>
+
+        </HBox>
+
+        <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <TableView fx:id="mediaFileTableView">
+                <columns>
+                    <TableColumn text="File Name" prefWidth="150">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="name"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Category" prefWidth="150">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="categoryListDescription"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Comments" prefWidth="150">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="comment"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="File Path" prefWidth="150">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="filePath"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </HBox>
+    </GridPane>
+</VBox>

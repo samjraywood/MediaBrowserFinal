@@ -3,11 +3,11 @@
     -fx-border-color: black;
     -fx-border-radius: 0;
     -fx-background-radius: 0;
-    -fx-background-color: #0085d5;
+    /*-fx-background-color: #0085d5;*/
 }
 
 .button:hover {
-    -fx-background-color: #07a2ff;
+    /*-fx-background-color: #07a2ff;*/
 }
 
 .table-view .column-header{
