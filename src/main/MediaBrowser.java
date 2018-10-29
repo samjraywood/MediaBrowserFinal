@@ -83,7 +83,7 @@ public class MediaBrowser {
 
     /**
      * Loads all files from the text file.
-     * 
+     *
      * - Convert from json string to java object
      * - Build Categories
      * - Main list of media file
