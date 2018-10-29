@@ -1,0 +1,26 @@
+
+.button {
+    -fx-border-color: black;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: #0085d5;
+}
+
+.button:hover {
+    -fx-background-color: #07a2ff;
+}
+
+.table-view .column-header{
+    -fx-background-color: #0085d5;
+    -fx-border-color: black;
+}
+
+.table-view .column-header:hover{
+    -fx-background-color: #07a2ff;
+}
+
+.combo-box {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: black;
+}
