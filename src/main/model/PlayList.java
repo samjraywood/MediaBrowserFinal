@@ -1,27 +1,22 @@
 package main.model;
 
-import javafx.beans.property.SimpleStringProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PlayList {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class PlayList implements Serializable {
 
-    private SimpleStringProperty name = new SimpleStringProperty();
+    private String name;
     private List<MediaFile> mediaFileList;
 
-    public PlayList() {
-    }
-
     public String getName() {
-        return name.get();
+        return name;
     }
 
     public void setName(String name) {
-        this.name.set(name);
-    }
-
-    public SimpleStringProperty nameProperty() {
-        return name;
+        this.name = name;
     }
 
     public List<MediaFile> getMediaFileList() {
@@ -30,5 +25,13 @@ public class PlayList {
 
     public void setMediaFileList(List<MediaFile> mediaFileList) {
         this.mediaFileList = mediaFileList;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayList{" +
+                "name='" + name + '\'' +
+                ", mediaFileList=" + mediaFileList +
+                '}';
     }
 }

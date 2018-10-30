@@ -1,0 +1,37 @@
+[ {
+  "id" : 1,
+  "name" : "Three Little Birds",
+  "filePath" : "threelittlebirds.mp3",
+  "comment" : "Bob Marley",
+  "mediaFileType" : "MP3",
+  "categories" : [ {
+    "name" : "Reggae"
+  } ]
+}, {
+  "id" : 2,
+  "name" : "Back In Black",
+  "filePath" : "backinblack.mp3",
+  "comment" : "AC/DC",
+  "mediaFileType" : "MP3",
+  "categories" : [ {
+    "name" : "Rock"
+  } ]
+}, {
+  "id" : 3,
+  "name" : "Jazz Song",
+  "filePath" : "jazzsong.mp3",
+  "comment" : "No comment",
+  "mediaFileType" : "MP3",
+  "categories" : [ {
+    "name" : "Jazz"
+  } ]
+}, {
+  "id" : 4,
+  "name" : "Classical Song",
+  "filePath" : "classicalsong.mp3",
+  "comment" : "classical",
+  "mediaFileType" : "MP3",
+  "categories" : [ {
+    "name" : "Jazz"
+  } ]
+} ]

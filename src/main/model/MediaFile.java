@@ -1,10 +1,16 @@
 package main.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.beans.property.SimpleStringProperty;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class MediaFile {
+@JsonIgnoreProperties(value = {"categoryListDisplayString"})
+public class MediaFile implements Serializable {
 
     private Long id;
     private SimpleStringProperty name = new SimpleStringProperty();
@@ -119,12 +125,21 @@ public class MediaFile {
      * Creates a string from a list of categories attached to the media file
      *
      * @return String
+     *
+     * - FXML uses this method via reflections
      */
-    public String getCategoryListDescription() {
+    public String getCategoryListDisplayString() {
         if (categories != null && !categories.isEmpty()) {
-            final StringBuilder sb = new StringBuilder();
-            categories.forEach(category1 -> sb.append(category1.getName()).append(" "));
-            return sb.toString();
+            final String sb = categories.stream()
+                    .filter(Objects::nonNull)
+                    .map(category1 -> category1.getName() + ", ")
+                    .collect(Collectors.joining());
+            final String categoryString = sb.trim();
+            if (categoryString.endsWith(",")) {
+                return categoryString.substring(0, categoryString.length() - 1);
+            } else {
+                return categoryString;
+            }
         } else {
             return "";
         }
@@ -160,15 +175,4 @@ public class MediaFile {
         return comment;
     }
 
-    @Override
-    public String toString() {
-        return "MediaFile{" +
-                "id=" + id +
-                ", name=" + name +
-                ", filePath=" + filePath +
-                ", comment=" + comment +
-                ", mediaFileType=" + mediaFileType +
-                ", categories=" + categories +
-                '}';
-    }
 }

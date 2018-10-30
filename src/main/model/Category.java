@@ -1,17 +1,10 @@
 package main.model;
 
-import javafx.beans.property.SimpleStringProperty;
+import java.io.Serializable;
 
-public class Category {
+public class Category implements Serializable {
 
-    private SimpleStringProperty name = new SimpleStringProperty();
-
-    /**
-     * Constructor
-     */
-    public Category (final String name) {
-        this.name.set(name);
-    }
+    private String name;
 
     /**
      * Get category description
@@ -19,14 +12,19 @@ public class Category {
      * @return String
      */
     public String getName() {
-        return name.get();
+        return name;
     }
 
     /**
      * Set category name
-     * @param name
+     * @param name name
      */
     public void setName(final String name) {
-        this.name.set(name);
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
