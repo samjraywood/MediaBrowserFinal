@@ -11,7 +11,7 @@ public class MediaFile {
     private SimpleStringProperty filePath = new SimpleStringProperty();
     private SimpleStringProperty comment = new SimpleStringProperty();
     private MediaFileType mediaFileType;
-    private List<String> categories;
+    private List<Category> categories;
 
     public MediaFile() {
     }
@@ -111,7 +111,7 @@ public class MediaFile {
      *
      * @return List of Category
      */
-    public List<String> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
@@ -123,7 +123,7 @@ public class MediaFile {
     public String getCategoryListDescription() {
         if (categories != null && !categories.isEmpty()) {
             final StringBuilder sb = new StringBuilder();
-            categories.forEach(category1 -> sb.append(category1).append(" "));
+            categories.forEach(category1 -> sb.append(category1.getName()).append(" "));
             return sb.toString();
         } else {
             return "";
@@ -135,7 +135,7 @@ public class MediaFile {
      *
      * @param categories List of Category
      */
-    public void setCategories(final List<String> categories) {
+    public void setCategories(final List<Category> categories) {
         this.categories = categories;
     }
 

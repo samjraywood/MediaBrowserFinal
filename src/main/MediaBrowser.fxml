@@ -26,12 +26,20 @@
         </HBox>
 
         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-            <VBox>
-                <padding>
-                    <Insets right="25"/>
-                </padding>
-                <Button fx:id="showAllButton" text="Show all"/>
-            </VBox>
+            <HBox>
+                <VBox>
+                    <padding>
+                        <Insets right="10"/>
+                    </padding>
+                    <Button fx:id="saveButton" text="Save"/>
+                </VBox>
+                <VBox>
+                    <padding>
+                        <Insets right="25"/>
+                    </padding>
+                    <Button fx:id="showAllButton" text="Show all"/>
+                </VBox>
+            </HBox>
             <Label fx:id="playListTitle"/>
         </HBox>
 
@@ -44,11 +52,23 @@
                             <padding>
                                 <Insets top="5" bottom="5"/>
                             </padding>
-                            <Button fx:id="addPlayListButton" text="+"/>
+                            <VBox>
+                                <padding>
+                                    <Insets right="10"/>
+                                </padding>
+                                <Button fx:id="addPlayListButton" text="+"/>
+                            </VBox>
+                            <VBox>
+                                <padding>
+                                    <Insets right="10"/>
+                                </padding>
+                                <Button fx:id="editPlayListButton" text="*"/>
+                            </VBox>
+                            <TextField fx:id="editPlayListTextField"/>
                         </HBox>
                         <TableView fx:id="playListTableView" HBox.hgrow="NEVER">
                             <columns>
-                                <TableColumn text="Play lists" prefWidth="220">
+                                <TableColumn text="Play lists" prefWidth="230">
                                     <cellValueFactory>
                                         <PropertyValueFactory property="name"/>
                                     </cellValueFactory>
@@ -63,11 +83,23 @@
                             <padding>
                                 <Insets top="5" bottom="5"/>
                             </padding>
-                            <Button fx:id="addCategoryButton" text="+"/>
+                            <VBox>
+                                <padding>
+                                    <Insets right="10"/>
+                                </padding>
+                                <Button fx:id="addCategoryButton" text="+"/>
+                            </VBox>
+                            <VBox>
+                                <padding>
+                                    <Insets right="10"/>
+                                </padding>
+                                <Button fx:id="editCategoryButton" text="*"/>
+                            </VBox>
+                            <TextField fx:id="editCategoryTextField"/>
                         </HBox>
                         <TableView fx:id="categoryTableView" HBox.hgrow="NEVER">
                             <columns>
-                                <TableColumn text="Categories" prefWidth="220">
+                                <TableColumn text="Categories" prefWidth="230">
                                     <cellValueFactory>
                                         <PropertyValueFactory property="name"/>
                                     </cellValueFactory>

@@ -1,19 +1,16 @@
 package main.model;
 
-public enum Category {
+import javafx.beans.property.SimpleStringProperty;
 
-    CLASSICAL("Classical"),
-    ROCK("Rock"),
-    REGGAE("Reggae"),
-    JAZZ("Jazz");
+public class Category {
 
-    private String description;
+    private SimpleStringProperty name = new SimpleStringProperty();
 
     /**
      * Constructor
      */
-    Category(String description) {
-        this.description = description;
+    public Category (final String name) {
+        this.name.set(name);
     }
 
     /**
@@ -21,7 +18,15 @@ public enum Category {
      *
      * @return String
      */
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name.get();
+    }
+
+    /**
+     * Set category name
+     * @param name
+     */
+    public void setName(final String name) {
+        this.name.set(name);
     }
 }

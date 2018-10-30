@@ -12,6 +12,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("MediaBrowser.fxml"));
         primaryStage.setTitle("Media Browser");
+        primaryStage.setMaxHeight(500);
+        primaryStage.setMaxWidth(850);
         Scene scene = new Scene(root, 850, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
