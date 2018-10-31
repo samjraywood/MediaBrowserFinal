@@ -7,8 +7,12 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import main.model.Category;
 import main.model.MediaFile;
 import main.model.MediaFileType;
@@ -49,16 +53,21 @@ public class MediaBrowser extends VBox {
     @FXML
     private Button saveAllButton;
     @FXML
+    private Button importButton;
+    @FXML
     private Button saveCommentButton;
     @FXML
     private TextField commentTextField;
 
+    // Right click menu for the playlist table
     private final MenuItem removePlaylistMenuItem = new MenuItem(REMOVE_STRING);
     private final ContextMenu playListContextMenu = new ContextMenu(removePlaylistMenuItem);
 
+    // Right click menu for the category table
     private final MenuItem removeCategoryMenuItem = new MenuItem(REMOVE_STRING);
     private final ContextMenu categoryContextMenu = new ContextMenu(removeCategoryMenuItem);
 
+    // Right click menu for the main media file table
     private final Menu addToPlaylistMenu = new Menu("Add to playlist");
     private final MenuItem setCategoryMenuItem = new MenuItem("Set selected categories");
     private final MenuItem removeFromPlaylistMenuItem = new MenuItem("Remove from playlist");
@@ -68,7 +77,8 @@ public class MediaBrowser extends VBox {
     private ObservableList<PlayList> observableListPlayList = FXCollections.observableArrayList(); // To be set to the play list table view
     private ObservableList<Category> observableCategoryList = FXCollections.observableArrayList(); // To be set to the category table view
 
-    private List<MediaFile> mainMediaFileList = new ArrayList<>(); // store all media files, which can then be added to multiple play lists
+//    private List<MediaFile> mainMediaFileList = new ArrayList<>(); // store all media files, which can then be added to multiple play lists
+
 
     @FXML
     public void initialize() {
@@ -81,7 +91,7 @@ public class MediaBrowser extends VBox {
 
     /**
      * Initialise all buttons and menu items
-     * <p>
+     *
      * - set on action
      * - set tool tips
      */
@@ -112,6 +122,27 @@ public class MediaBrowser extends VBox {
 
         saveCommentButton.setOnAction(event -> saveCommentToMediaFile());
         saveCommentButton.setTooltip(new Tooltip("Save comment"));
+
+        importButton.setOnAction(event -> showImportWindow());
+    }
+
+    /**
+     * Loads separate window so the user can import files from specified location.
+     */
+    private void showImportWindow() {
+        try {
+            final Parent root = FXMLLoader.load(getClass().getResource("importWindow.fxml"));
+            final Scene scene = new Scene(root, 300, 300);
+            final Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.setTitle("Import");
+            stage.show();
+        } catch (final IOException e) {
+            System.out.println("Could not load import window" + e);
+        }
+
+
     }
 
     /**
@@ -122,7 +153,7 @@ public class MediaBrowser extends VBox {
         final List<Long> mediaFileIdList = currentPlaylist.getMediaFileIdList();
         final MediaFile selectedMediaFile = getSelectedMediaFile();
         mediaFileIdList.removeIf(id -> selectedMediaFile != null && id.equals(selectedMediaFile.getId()));
-        mediaFileTableView.refresh();
+        setPlaylistToTable(currentPlaylist);
     }
 
     /**
@@ -156,6 +187,7 @@ public class MediaBrowser extends VBox {
 
     /**
      * Gets current selected MediaFile from the table
+     *
      * @return MediaFile
      */
     private MediaFile getSelectedMediaFile() {
@@ -227,16 +259,25 @@ public class MediaBrowser extends VBox {
 
         playListTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                playListTitle.setText(newValue.getName());
-                editPlayListTextField.setText(newValue.getName());
-                observableMediaFileList.setAll(getMediaFilesById(newValue.getMediaFileIdList()));
-                mediaFileTableView.refresh();
+                setPlaylistToTable(newValue);
             }
         });
 
         if (!observableListPlayList.isEmpty()) {
             playListTitle.setText(observableListPlayList.get(0).getName());
         }
+    }
+
+    /**
+     * Sets the selected playlist to the main table.
+     *
+     * @param playlist playlist
+     */
+    private void setPlaylistToTable(PlayList playlist) {
+        playListTitle.setText(playlist.getName());
+        editPlayListTextField.setText(playlist.getName());
+        observableMediaFileList.setAll(getMediaFilesById(playlist.getMediaFileIdList()));
+        mediaFileTableView.refresh();
     }
 
     /**
@@ -261,7 +302,7 @@ public class MediaBrowser extends VBox {
             final List<MediaFile> mediaFiles = new ArrayList<>();
             mediaFileIdList
                     .stream()
-                    .map(id -> mainMediaFileList.stream().filter(mediaFile -> mediaFile.getId().equals(id)).findFirst())
+                    .map(id -> MediaFileHolder.getMediaFileList().stream().filter(mediaFile -> mediaFile.getId().equals(id)).findFirst())
                     .forEach(optional -> optional.ifPresent(mediaFiles::add));
             return mediaFiles;
 
@@ -298,7 +339,7 @@ public class MediaBrowser extends VBox {
      * Temp - add a list of all media files to a main list TODO
      */
     private void loadMediaFilesTemporary() {
-        mainMediaFileList.addAll(getMediaFileList());
+        MediaFileHolder.addAll(getMediaFileList());
     }
 
     /**
@@ -336,7 +377,7 @@ public class MediaBrowser extends VBox {
                 }
                 final List<MediaFile> mediaFiles = new ObjectMapper().readValue(stringBuilder.toString(), new TypeReference<List<MediaFile>>() {
                 });
-                mainMediaFileList.addAll(mediaFiles);
+                MediaFileHolder.addAll(mediaFiles);
             } catch (IOException e) {
                 System.out.println("Error: Could not load categories from file" + e);
             }
@@ -373,7 +414,7 @@ public class MediaBrowser extends VBox {
 
         final List<PlayList> playLists = new ArrayList<>(observableListPlayList);
         final List<Category> categories = new ArrayList<>(observableCategoryList);
-        final List<MediaFile> mediaFiles = new ArrayList<>(mainMediaFileList);
+        final List<MediaFile> mediaFiles = new ArrayList<>(MediaFileHolder.getMediaFileList());
 
         try {
             writer.writeValue(new File(PLAYLIST_FILE_JSON), playLists);
@@ -402,7 +443,7 @@ public class MediaBrowser extends VBox {
             observableCategoryList.set(selectedCategoryIndex, updatedCategory); // Replace with the updated one
             editCategoryTextField.setText(null); // Set the text field back to null
 
-            updateAllMediaFileCategories(initialCategoryName, updatedCategory, mainMediaFileList);
+            updateAllMediaFileCategories(initialCategoryName, updatedCategory, MediaFileHolder.getMediaFileList());
             updateAllMediaFileCategories(initialCategoryName, updatedCategory, observableMediaFileList);
             mediaFileTableView.refresh();
         }
@@ -459,13 +500,13 @@ public class MediaBrowser extends VBox {
      */
     private void updateMainList(final MediaFile selectedMediaFile, final MediaFile updatedMediaFile) {
         int mainListIndex = 0;
-        if (mainMediaFileList != null && !mainMediaFileList.isEmpty()) {
-            for (final MediaFile mediaFile : mainMediaFileList) {
+        if (MediaFileHolder.getMediaFileList() != null && !MediaFileHolder.getMediaFileList().isEmpty()) {
+            for (final MediaFile mediaFile : MediaFileHolder.getMediaFileList()) {
                 if (mediaFile.getId().equals(selectedMediaFile.getId())) {
-                    mainListIndex = mainMediaFileList.indexOf(mediaFile);
+                    mainListIndex = MediaFileHolder.getMediaFileList().indexOf(mediaFile);
                 }
             }
-            mainMediaFileList.set(mainListIndex, updatedMediaFile);
+            MediaFileHolder.getMediaFileList().set(mainListIndex, updatedMediaFile);
         }
     }
 
@@ -493,6 +534,7 @@ public class MediaBrowser extends VBox {
      * Shows all media files from the main list
      */
     private void showAllMediaFiles() {
+        final List<MediaFile> mainMediaFileList = MediaFileHolder.getMediaFileList();
         if (mainMediaFileList != null && !mainMediaFileList.isEmpty()) {
             observableMediaFileList.setAll(mainMediaFileList);
             playListTitle.setText("All Files");
@@ -529,7 +571,7 @@ public class MediaBrowser extends VBox {
      */
     private void removeCategoryFromAllMediaFiles(final String initialCategoryName) {
         if (initialCategoryName != null) {
-            for (final MediaFile mediaFile : mainMediaFileList) {
+            for (final MediaFile mediaFile : MediaFileHolder.getMediaFileList()) {
                 final List<Category> categories = mediaFile.getCategories();
                 categories.removeIf(category1 -> category1.getName().equals(initialCategoryName));
             }

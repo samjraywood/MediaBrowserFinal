@@ -5,7 +5,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.GridPane?>
 <VBox fx:controller="main.UI.MediaBrowser"
-      xmlns:fx="http://javafx.com/fxml" stylesheets="@MediaBrowser.css">
+      xmlns:fx="http://javafx.com/fxml" stylesheets="@mediaBrowser.css">
     <padding>
         <Insets top="10" bottom="10" left="10" right="10"/>
     </padding>
@@ -28,6 +28,12 @@
                     <Insets right="10"/>
                 </padding>
                 <Button fx:id="showAllButton" text="Show all"/>
+            </VBox>
+            <VBox>
+                <padding>
+                    <Insets right="10"/>
+                </padding>
+                <Button fx:id="importButton" text="Import"/>
             </VBox>
         </HBox>
 
