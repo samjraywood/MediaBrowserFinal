@@ -1,37 +1,49 @@
 package main.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PlayList implements Serializable {
 
     private String name;
-    private List<MediaFile> mediaFileList;
+    private List<Long> mediaFileIdList = new ArrayList<>();
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
-    public List<MediaFile> getMediaFileList() {
-        return mediaFileList;
+    public List<Long> getMediaFileIdList() {
+        return mediaFileIdList;
     }
 
-    public void setMediaFileList(List<MediaFile> mediaFileList) {
-        this.mediaFileList = mediaFileList;
+    public void setMediaFileIdList(final List<Long> mediaFileIdList) {
+        this.mediaFileIdList = mediaFileIdList;
     }
 
     @Override
     public String toString() {
         return "PlayList{" +
                 "name='" + name + '\'' +
-                ", mediaFileList=" + mediaFileList +
+                ", mediaFileIdList=" + mediaFileIdList +
                 '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final PlayList playList = (PlayList) o;
+
+        return name != null ? name.equals(playList.name) : playList.name == null;
     }
 }

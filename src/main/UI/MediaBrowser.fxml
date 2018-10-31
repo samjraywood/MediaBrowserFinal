@@ -13,15 +13,21 @@
     <GridPane hgap="10" vgap="10">
         <!-- First row -->
         <Label style="-fx-font-weight: bold" text="Media Browser" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="searchTextField" promptText="Search..." GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <TextField fx:id="searchTextField" visible="false" promptText="Search..." GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
         <!-- Second row -->
         <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
             <VBox>
                 <padding>
-                    <Insets right="150"/>
+                    <Insets right="10"/>
                 </padding>
-                <Label text=" "/>
+                <Button fx:id="saveAllButton" text="Save All"/>
+            </VBox>
+            <VBox>
+                <padding>
+                    <Insets right="10"/>
+                </padding>
+                <Button fx:id="showAllButton" text="Show all"/>
             </VBox>
         </HBox>
 
@@ -30,13 +36,13 @@
                 <padding>
                     <Insets right="10"/>
                 </padding>
-                <Button fx:id="saveButton" text="Save"/>
+                <TextField fx:id="commentTextField" promptText="Change comment..."/>
             </VBox>
             <VBox>
                 <padding>
-                    <Insets right="380"/>
+                    <Insets right="50"/>
                 </padding>
-                <Button fx:id="showAllButton" text="Show all"/>
+                <Button fx:id="saveCommentButton" text="Save"/>
             </VBox>
             <Label style="-fx-font-weight: bold" fx:id="playListTitle"/>
         </HBox>

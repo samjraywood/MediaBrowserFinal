@@ -8,18 +8,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import main.model.Category;
 import main.model.MediaFile;
 import main.model.MediaFileType;
 import main.model.PlayList;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class MediaBrowser {
+public class MediaBrowser extends VBox {
 
     private static final String REMOVE_STRING = "Remove";
     private static final String PLAYLIST_FILE_JSON = "playlistFile.json";
@@ -49,23 +47,26 @@ public class MediaBrowser {
     @FXML
     private Button showAllButton;
     @FXML
-    private Button saveButton;
+    private Button saveAllButton;
     @FXML
-    private TextField searchTextField;
+    private Button saveCommentButton;
+    @FXML
+    private TextField commentTextField;
 
-    private final MenuItem removePlaylist = new MenuItem(REMOVE_STRING);
-    private final ContextMenu playListContextMenu = new ContextMenu(removePlaylist);
+    private final MenuItem removePlaylistMenuItem = new MenuItem(REMOVE_STRING);
+    private final ContextMenu playListContextMenu = new ContextMenu(removePlaylistMenuItem);
 
-    private final MenuItem removeCategory = new MenuItem(REMOVE_STRING);
-    private final ContextMenu categoryContextMenu = new ContextMenu(removeCategory);
+    private final MenuItem removeCategoryMenuItem = new MenuItem(REMOVE_STRING);
+    private final ContextMenu categoryContextMenu = new ContextMenu(removeCategoryMenuItem);
 
-    private final MenuItem addToPlaylist = new MenuItem("Add to playlist");
-    private final MenuItem setCategory = new MenuItem("Set selected categories");
-    private final ContextMenu mediaFileContextMenu = new ContextMenu(addToPlaylist, setCategory);
+    private final Menu addToPlaylistMenu = new Menu("Add to playlist");
+    private final MenuItem setCategoryMenuItem = new MenuItem("Set selected categories");
+    private final MenuItem removeFromPlaylistMenuItem = new MenuItem("Remove from playlist");
+    private final ContextMenu mediaFileContextMenu = new ContextMenu(addToPlaylistMenu, removeFromPlaylistMenuItem, setCategoryMenuItem);
 
     private ObservableList<MediaFile> observableMediaFileList = FXCollections.observableArrayList(); // To be set to the media file table view
     private ObservableList<PlayList> observableListPlayList = FXCollections.observableArrayList(); // To be set to the play list table view
-    private ObservableList<Category> observableCategoryList = FXCollections.observableArrayList(); // To be set to the play list table view
+    private ObservableList<Category> observableCategoryList = FXCollections.observableArrayList(); // To be set to the category table view
 
     private List<MediaFile> mainMediaFileList = new ArrayList<>(); // store all media files, which can then be added to multiple play lists
 
@@ -75,19 +76,21 @@ public class MediaBrowser {
         initialiseButtons();
         initialiseCategories();
         initialisePlaylists();
-        initialiseSearchField();
         initialiseMediaFileTableView();
     }
 
     /**
-     * Initialise all buttons
-     *
+     * Initialise all buttons and menu items
+     * <p>
      * - set on action
      * - set tool tips
      */
     private void initialiseButtons() {
-        removePlaylist.setOnAction(event -> removePlayList());
-        removeCategory.setOnAction(event -> removeCategory());
+        removePlaylistMenuItem.setOnAction(event -> removePlayList());
+        removeCategoryMenuItem.setOnAction(event -> removeCategory());
+        setCategoryMenuItem.setOnAction(event -> setSelectedCategory());
+        mediaFileContextMenu.setOnShown(event -> createAddToPlaylistOptions());
+        removeFromPlaylistMenuItem.setOnAction(event -> removeFromPlaylist());
 
         addPlayListButton.setOnAction(event -> addNewPlayList());
         addPlayListButton.setTooltip(new Tooltip("Add new Playlist"));
@@ -101,27 +104,93 @@ public class MediaBrowser {
         editCategoryButton.setOnAction(event -> editCategory());
         editCategoryButton.setTooltip(new Tooltip("Edit Category"));
 
-        setCategory.setOnAction(event -> setSelectedCategory());
-
         showAllButton.setOnAction(event -> showAllMediaFiles());
         showAllButton.setTooltip(new Tooltip("Show all media files"));
 
-        saveButton.setOnAction(event -> saveAndExportData());
+        saveAllButton.setOnAction(event -> saveAndExportData());
+        saveAllButton.setTooltip(new Tooltip("Save all progress"));
+
+        saveCommentButton.setOnAction(event -> saveCommentToMediaFile());
+        saveCommentButton.setTooltip(new Tooltip("Save comment"));
+    }
+
+    /**
+     * Removes selected media file from current playlist
+     */
+    private void removeFromPlaylist() {
+        final PlayList currentPlaylist = playListTableView.getSelectionModel().getSelectedItem();
+        final List<Long> mediaFileIdList = currentPlaylist.getMediaFileIdList();
+        final MediaFile selectedMediaFile = getSelectedMediaFile();
+        mediaFileIdList.removeIf(id -> selectedMediaFile != null && id.equals(selectedMediaFile.getId()));
+        mediaFileTableView.refresh();
+    }
+
+    /**
+     * Creates menu items to show all play list options to add to
+     */
+    private void createAddToPlaylistOptions() {
+        final List<MenuItem> playlistMenuItems = new ArrayList<>();
+        for (PlayList playList : observableListPlayList) {
+            final MenuItem menuItem = new MenuItem(playList.getName());
+            menuItem.setOnAction(event -> addToPlayList(playList.getName()));
+            playlistMenuItems.add(menuItem);
+        }
+        addToPlaylistMenu.getItems().setAll(playlistMenuItems);
+
+        removeFromPlaylistMenuItem.setDisable(playListTableView.getSelectionModel().getSelectedItem() == null);
+    }
+
+    /**
+     * Finds selected playlist and adds the selected media file to its list.
+     *
+     * @param playlistName playlistName
+     */
+    private void addToPlayList(final String playlistName) {
+        for (final PlayList playList : observableListPlayList) {
+            if (playList.getName().equals(playlistName)) {
+                playList.getMediaFileIdList().add(getSelectedMediaFile().getId());
+                mediaFileContextMenu.hide();
+            }
+        }
+    }
+
+    /**
+     * Gets current selected MediaFile from the table
+     * @return MediaFile
+     */
+    private MediaFile getSelectedMediaFile() {
+        return mediaFileTableView.getSelectionModel().getSelectedItem();
+    }
+
+    /**
+     * Saves comment to selected media file. Takes text from comment text field and over writes.
+     */
+    private void saveCommentToMediaFile() {
+        final MediaFile selectedMediaFile = getSelectedMediaFile();
+        final String updatedComment = commentTextField.getText();
+
+        if (selectedMediaFile != null) {
+            final MediaFile updatedMediaFile = new MediaFile();
+            updatedMediaFile.setId(selectedMediaFile.getId());
+            updatedMediaFile.setName(selectedMediaFile.getName());
+            updatedMediaFile.setComment(updatedComment != null ? updatedComment : "");
+            updatedMediaFile.setFilePath(selectedMediaFile.getFilePath());
+            updatedMediaFile.setMediaFileType(selectedMediaFile.getMediaFileType());
+            updatedMediaFile.setCategories(selectedMediaFile.getCategories());
+
+            final int mediaFileIndex = observableMediaFileList.indexOf(selectedMediaFile);
+            observableMediaFileList.set(mediaFileIndex, updatedMediaFile);
+
+            updateMainList(selectedMediaFile, updatedMediaFile);
+        }
+        commentTextField.setText(null);
     }
 
     /**
      * Create categories and add to list
      */
     private void initialiseCategories() {
-//        final Category category1 = new Category();
-//        category1.setName("Classical");
-//        final Category category2 = new Category();
-//        category2.setName("Rock");
-//        final Category category3 = new Category();
-//        category3.setName("Reggae");
-//        final Category category4 = new Category();
-//        category4.setName("Jazz");
-//        observableCategoryList.addAll(category1, category2, category3, category4);
+//        createCategories();
         categoryTableView.setItems(observableCategoryList);
         categoryTableView.setContextMenu(categoryContextMenu);
         categoryTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -134,13 +203,25 @@ public class MediaBrowser {
     }
 
     /**
+     * TEMP
+     */
+    private void createCategories() {
+        final Category category1 = new Category();
+        category1.setName("Classical");
+        final Category category2 = new Category();
+        category2.setName("Rock");
+        final Category category3 = new Category();
+        category3.setName("Reggae");
+        final Category category4 = new Category();
+        category4.setName("Jazz");
+        observableCategoryList.addAll(category1, category2, category3, category4);
+    }
+
+    /**
      * Sets the list of play lists available to the combo box
      */
     private void initialisePlaylists() {
-//        final PlayList playList1 = new PlayList();
-//        playList1.setName("First Playlist");
-//        playList1.setMediaFileList(getMediaFileList());
-//        observableListPlayList.add(playList1);
+//        createPlaylist();
         playListTableView.setItems(observableListPlayList);
         playListTableView.setContextMenu(playListContextMenu);
 
@@ -148,17 +229,44 @@ public class MediaBrowser {
             if (newValue != null) {
                 playListTitle.setText(newValue.getName());
                 editPlayListTextField.setText(newValue.getName());
-                observableMediaFileList.setAll(newValue.getMediaFileList() != null ? newValue.getMediaFileList() : FXCollections.emptyObservableList());
+                observableMediaFileList.setAll(getMediaFilesById(newValue.getMediaFileIdList()));
                 mediaFileTableView.refresh();
             }
         });
 
-        playListTableView.getSelectionModel().selectFirst();
-
         if (!observableListPlayList.isEmpty()) {
             playListTitle.setText(observableListPlayList.get(0).getName());
         }
+    }
 
+    /**
+     * TEMP TODO
+     */
+    private void createPlaylist() {
+        final PlayList playList1 = new PlayList();
+        playList1.setName("First Playlist");
+        final Long[] fileIdList = {1L, 2L, 3L, 4L};
+        playList1.setMediaFileIdList(Arrays.asList(fileIdList));
+        observableListPlayList.add(playList1);
+    }
+
+    /**
+     * Takes any Media File ids that are stored with a playlist and returns the corresponding Media File
+     *
+     * @param mediaFileIdList mediaFileIdList
+     * @return List of Media File
+     */
+    private List<MediaFile> getMediaFilesById(final List<Long> mediaFileIdList) {
+        if (mediaFileIdList != null && !mediaFileIdList.isEmpty()) {
+            final List<MediaFile> mediaFiles = new ArrayList<>();
+            mediaFileIdList
+                    .stream()
+                    .map(id -> mainMediaFileList.stream().filter(mediaFile -> mediaFile.getId().equals(id)).findFirst())
+                    .forEach(optional -> optional.ifPresent(mediaFiles::add));
+            return mediaFiles;
+
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -166,13 +274,13 @@ public class MediaBrowser {
      */
     private void initialiseMediaFileTableView() {
         mediaFileTableView.setContextMenu(mediaFileContextMenu);
-//        observableMediaFileList.addAll(getMediaFileList());
+        showAllMediaFiles();
         mediaFileTableView.setItems(observableMediaFileList);
     }
 
     /**
      * Loads all files from the text file.
-     *
+     * <p>
      * - Convert from json string to java object
      * - Build Categories
      * - Main list of media file
@@ -187,7 +295,7 @@ public class MediaBrowser {
     }
 
     /**
-     * Temp - add a list of all media files to a main list
+     * Temp - add a list of all media files to a main list TODO
      */
     private void loadMediaFilesTemporary() {
         mainMediaFileList.addAll(getMediaFileList());
@@ -205,7 +313,8 @@ public class MediaBrowser {
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
                 }
-                final List<Category> categories = new ObjectMapper().readValue(stringBuilder.toString(), new TypeReference<List<Category>>() {});
+                final List<Category> categories = new ObjectMapper().readValue(stringBuilder.toString(), new TypeReference<List<Category>>() {
+                });
                 observableCategoryList.setAll(categories);
             } catch (IOException e) {
                 System.out.println("Error: Could not load categories from file" + e);
@@ -225,7 +334,8 @@ public class MediaBrowser {
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
                 }
-                final List<MediaFile> mediaFiles = new ObjectMapper().readValue(stringBuilder.toString(), new TypeReference<List<MediaFile>>() {});
+                final List<MediaFile> mediaFiles = new ObjectMapper().readValue(stringBuilder.toString(), new TypeReference<List<MediaFile>>() {
+                });
                 mainMediaFileList.addAll(mediaFiles);
             } catch (IOException e) {
                 System.out.println("Error: Could not load categories from file" + e);
@@ -245,7 +355,8 @@ public class MediaBrowser {
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
                 }
-                final List<PlayList> playLists = new ObjectMapper().readValue(stringBuilder.toString(), new TypeReference<List<PlayList>>() {});
+                final List<PlayList> playLists = new ObjectMapper().readValue(stringBuilder.toString(), new TypeReference<List<PlayList>>() {
+                });
                 observableListPlayList.setAll(playLists);
             } catch (IOException e) {
                 System.out.println("Error: Could not load play lists from file" + e);
@@ -281,6 +392,7 @@ public class MediaBrowser {
      */
     private void editCategory() {
         final Category selectedPlayCategory = categoryTableView.getSelectionModel().getSelectedItem();
+        final String initialCategoryName = selectedPlayCategory.getName();
         final String newCategoryName = editCategoryTextField.getText();
 
         if (newCategoryName != null && !newCategoryName.trim().isEmpty()) { // Validate new category name is not null or empty
@@ -289,16 +401,40 @@ public class MediaBrowser {
             final int selectedCategoryIndex = observableCategoryList.indexOf(selectedPlayCategory); // Find selected category from list
             observableCategoryList.set(selectedCategoryIndex, updatedCategory); // Replace with the updated one
             editCategoryTextField.setText(null); // Set the text field back to null
+
+            updateAllMediaFileCategories(initialCategoryName, updatedCategory, mainMediaFileList);
+            updateAllMediaFileCategories(initialCategoryName, updatedCategory, observableMediaFileList);
+            mediaFileTableView.refresh();
+        }
+    }
+
+    /**
+     * Check all media files to see if they need to update the category when editing the name.
+     *
+     * @param initialCategoryName initialCategoryName
+     * @param updatedCategory     updatedCategory
+     */
+    private void updateAllMediaFileCategories(final String initialCategoryName,
+                                              final Category updatedCategory,
+                                              final Collection<MediaFile> mediaFileList) {
+        for (final MediaFile mediaFile : mediaFileList) {
+            final List<Category> categories = mediaFile.getCategories();
+            for (final Category category : categories) {
+                if (category.getName().equals(initialCategoryName)) {
+                    final int categoryIndex = categories.indexOf(category);
+                    categories.set(categoryIndex, updatedCategory);
+                }
+            }
         }
     }
 
     /**
      * Adds the selected category or categories from the category table to the selected MediaFile
-     *
+     * <p>
      * - MultiSelect enabled on category grid
      */
     private void setSelectedCategory() {
-        final MediaFile selectedMediaFile = mediaFileTableView.getSelectionModel().getSelectedItem();
+        final MediaFile selectedMediaFile = getSelectedMediaFile();
         final List<Category> selectedCategories = categoryTableView.getSelectionModel().getSelectedItems();
 
         final MediaFile updatedMediaFile = new MediaFile();
@@ -313,17 +449,15 @@ public class MediaBrowser {
         observableMediaFileList.set(mediaFileIndex, updatedMediaFile);
 
         updateMainList(selectedMediaFile, updatedMediaFile);
-
-        // need to update all playlists here as well if the selected media file exists on any
-
     }
 
     /**
      * updates main media file list with updated object
+     *
      * @param selectedMediaFile selectedMediaFile
-     * @param updatedMediaFile updatedMediaFile
+     * @param updatedMediaFile  updatedMediaFile
      */
-    private void updateMainList(MediaFile selectedMediaFile, MediaFile updatedMediaFile) {
+    private void updateMainList(final MediaFile selectedMediaFile, final MediaFile updatedMediaFile) {
         int mainListIndex = 0;
         if (mainMediaFileList != null && !mainMediaFileList.isEmpty()) {
             for (final MediaFile mediaFile : mainMediaFileList) {
@@ -348,7 +482,7 @@ public class MediaBrowser {
         if (newPlaylistName != null && !newPlaylistName.trim().isEmpty()) { // Validate the new playlist name is not null or empty
             final PlayList updatedPlaylist = new PlayList();
             updatedPlaylist.setName(newPlaylistName);
-            updatedPlaylist.setMediaFileList(selectedPlaylist.getMediaFileList()); // Copy the list of files from the selected playlist
+            updatedPlaylist.setMediaFileIdList(selectedPlaylist.getMediaFileIdList()); // Copy the list of files from the selected playlist
             final int selectedPlaylistIndex = observableListPlayList.indexOf(selectedPlaylist); // Find selected playlist from list
             observableListPlayList.set(selectedPlaylistIndex, updatedPlaylist); // Replace with the updated one
             playListTableView.getSelectionModel().select(updatedPlaylist);
@@ -363,6 +497,7 @@ public class MediaBrowser {
             observableMediaFileList.setAll(mainMediaFileList);
             playListTitle.setText("All Files");
             mediaFileTableView.refresh();
+            playListTableView.getSelectionModel().clearSelection();
         }
     }
 
@@ -383,9 +518,27 @@ public class MediaBrowser {
         final Category selectedCategory = categoryTableView.getSelectionModel().getSelectedItem();
         if (selectedCategory != null) {
             observableCategoryList.remove(selectedCategory);
-
-            // TODO if category is assigned to mediafile when removed then remove from media file
+            removeCategoryFromAllMediaFiles(selectedCategory.getName());
         }
+    }
+
+    /**
+     * Removes the selected deleted category from all media files that reference it.
+     *
+     * @param initialCategoryName initialCategoryName
+     */
+    private void removeCategoryFromAllMediaFiles(final String initialCategoryName) {
+        if (initialCategoryName != null) {
+            for (final MediaFile mediaFile : mainMediaFileList) {
+                final List<Category> categories = mediaFile.getCategories();
+                categories.removeIf(category1 -> category1.getName().equals(initialCategoryName));
+            }
+            for (final MediaFile mediaFile : observableMediaFileList) {
+                final List<Category> categories = mediaFile.getCategories();
+                categories.removeIf(category1 -> category1.getName().equals(initialCategoryName));
+            }
+        }
+        mediaFileTableView.refresh();
     }
 
     /**
@@ -396,8 +549,12 @@ public class MediaBrowser {
         if (categoryName != null && !categoryName.trim().isEmpty()) {
             final Category newCategory = new Category();
             newCategory.setName(categoryName.trim());
-            observableCategoryList.add(newCategory);
-            categoryTableView.getSelectionModel().select(newCategory);
+            if (observableCategoryList.contains(newCategory)) {
+                showDialog("Error adding new Category", "Name already exists");
+            } else {
+                observableCategoryList.add(newCategory);
+                categoryTableView.getSelectionModel().select(newCategory);
+            }
         }
     }
 
@@ -409,16 +566,13 @@ public class MediaBrowser {
         if (playListName != null && !playListName.trim().isEmpty()) {
             final PlayList newPlayList = new PlayList();
             newPlayList.setName(playListName.trim());
-            observableListPlayList.add(newPlayList);
-            playListTableView.getSelectionModel().select(newPlayList);
+            if (observableListPlayList.contains(newPlayList)) {
+                showDialog("Error adding new playlist", "Name already exists");
+            } else {
+                observableListPlayList.add(newPlayList);
+                playListTableView.getSelectionModel().select(newPlayList);
+            }
         }
-    }
-
-    /**
-     * Sets listeners to the search field to filter results.
-     */
-    private void initialiseSearchField() {
-        // TODO add filtering on search
     }
 
     /**
@@ -436,7 +590,7 @@ public class MediaBrowser {
     }
 
     /**
-     * Gets a list of media files.
+     * Gets a list of media files. TODO remove
      */
     private List<MediaFile> getMediaFileList() {
         final List<MediaFile> mediaFileList = new ArrayList<>();
@@ -478,5 +632,18 @@ public class MediaBrowser {
         mediaFileList.add(mediaFile4);
 
         return mediaFileList;
+    }
+
+    /**
+     * Shows an alert to the user
+     *
+     * @param headerMessage  headerMessage
+     * @param contentMessage contentMessage
+     */
+    private void showDialog(final String headerMessage, final String contentMessage) {
+        final Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setHeaderText(headerMessage);
+        alert.setContentText(contentMessage);
+        alert.showAndWait();
     }
 }
