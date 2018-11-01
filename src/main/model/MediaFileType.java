@@ -1,5 +1,10 @@
 package main.model;
 
+/**
+ * Enum for MediaFileType
+ *
+ * - These are the only valid file types for this application
+ */
 public enum MediaFileType {
 
     MP3(".mp3"),

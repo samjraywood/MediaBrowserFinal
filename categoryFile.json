@@ -1,11 +1,11 @@
 [ {
-  "name" : "Classical"
+  "categoryName" : "Classical2"
 }, {
-  "name" : "Rock"
+  "categoryName" : "Rock"
 }, {
-  "name" : "Reggae"
+  "categoryName" : "Reggae"
 }, {
-  "name" : "Jazz"
+  "categoryName" : "Jazz"
 }, {
-  "name" : "New Music"
+  "categoryName" : "NewCategory"
 } ]

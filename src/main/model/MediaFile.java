@@ -1,23 +1,25 @@
 package main.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+// We set this property in order to inform the ObjectMapper to ignore the method as it is only used from fxml via reflections
 @JsonIgnoreProperties(value = {"categoryListDisplayString"})
 public class MediaFile implements Serializable {
 
     private Long id;
-    private SimpleStringProperty name = new SimpleStringProperty();
-    private SimpleStringProperty filePath = new SimpleStringProperty();
+    private SimpleObjectProperty<FileName> name = new SimpleObjectProperty<>();
+    private SimpleObjectProperty<FilePath> filePath = new SimpleObjectProperty<>();
     private SimpleStringProperty comment = new SimpleStringProperty();
     private MediaFileType mediaFileType;
     private List<Category> categories;
+    private Image image;
 
     public MediaFile() {
     }
@@ -45,7 +47,7 @@ public class MediaFile implements Serializable {
      *
      * @return String
      */
-    public String getName() {
+    public FileName getName() {
         return name.get();
     }
 
@@ -54,7 +56,7 @@ public class MediaFile implements Serializable {
      *
      * @param name name
      */
-    public void setName(final String name) {
+    public void setName(final FileName name) {
         this.name.set(name);
     }
 
@@ -63,7 +65,7 @@ public class MediaFile implements Serializable {
      *
      * @return String
      */
-    public String getFilePath() {
+    public FilePath getFilePath() {
         return filePath.get();
     }
 
@@ -72,7 +74,7 @@ public class MediaFile implements Serializable {
      *
      * @param filePath filePath
      */
-    public void setFilePath(final String filePath) {
+    public void setFilePath(final FilePath filePath) {
         this.filePath.set(filePath);
     }
 
@@ -122,17 +124,26 @@ public class MediaFile implements Serializable {
     }
 
     /**
+     * Set categories
+     *
+     * @param categories List of Category
+     */
+    public void setCategories(final List<Category> categories) {
+        this.categories = categories;
+    }
+
+    /**
      * Creates a string from a list of categories attached to the media file
      *
      * @return String
      *
-     * - FXML uses this method via reflections
+     * - FXML uses this method via reflections - KEEP PUBLIC
      */
     public String getCategoryListDisplayString() {
         if (categories != null && !categories.isEmpty()) {
             final String sb = categories.stream()
                     .filter(Objects::nonNull)
-                    .map(category1 -> category1.getName() + ", ")
+                    .map(category1 -> category1.getCategoryName() + ", ")
                     .collect(Collectors.joining());
             final String categoryString = sb.trim();
             if (categoryString.endsWith(",")) {
@@ -146,25 +157,34 @@ public class MediaFile implements Serializable {
     }
 
     /**
-     * Set categories
+     * Get image
      *
-     * @param categories List of Category
+     * @return Image
      */
-    public void setCategories(final List<Category> categories) {
-        this.categories = categories;
+    public Image getImage() {
+        return image;
+    }
+
+    /**
+     * Set image
+     *
+     * @param image image
+     */
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     /**
      * nameProperty
      */
-    public SimpleStringProperty nameProperty() {
+    public SimpleObjectProperty<FileName> nameProperty() {
         return name;
     }
 
     /**
      * filePathProperty
      */
-    public SimpleStringProperty filePathProperty() {
+    public SimpleObjectProperty<FilePath> filePathProperty() {
         return filePath;
     }
 
@@ -175,4 +195,16 @@ public class MediaFile implements Serializable {
         return comment;
     }
 
+    @Override
+    public String toString() {
+        return "MediaFile{" +
+                "id=" + id +
+                ", name=" + name +
+                ", filePath=" + filePath +
+                ", comment=" + comment +
+                ", mediaFileType=" + mediaFileType +
+                ", categories=" + categories +
+                ", image=" + image +
+                '}';
+    }
 }

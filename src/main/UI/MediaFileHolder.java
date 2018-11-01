@@ -3,7 +3,6 @@ package main.UI;
 import main.model.MediaFile;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -39,6 +38,13 @@ public class MediaFileHolder {
         return mediaFileList;
     }
 
+    /**
+     * Gets all existing MediaFiles, sorts them by id and returns the next possible id.
+     *
+     * - Used when creating a new MediaFile from import.
+     *
+     * @return Long - id
+     */
     public static Long getNextId() {
         final List<MediaFile> mediaFilesSorted = new ArrayList<>(mediaFileList);
         mediaFilesSorted.sort(Comparator.comparing(MediaFile::getId));

@@ -1,39 +1,71 @@
 [ {
   "id" : 1,
-  "name" : "Three Little Birds",
-  "filePath" : "threelittlebirds.mp3",
+  "name" : {
+    "fileName" : "Three Little Birds"
+  },
+  "filePath" : {
+    "path" : "threelittlebirds.mp3"
+  },
   "comment" : "Bob Marley",
   "mediaFileType" : "MP3",
   "categories" : [ {
-    "name" : "Reggae"
-  } ]
+    "categoryName" : "Reggae"
+  }, {
+    "categoryName" : "NewCategory"
+  } ],
+  "image" : null
 }, {
   "id" : 2,
-  "name" : "Back In Black",
-  "filePath" : "backinblack.mp3",
+  "name" : {
+    "fileName" : "Back In Black"
+  },
+  "filePath" : {
+    "path" : "backinblack.mp3"
+  },
   "comment" : "AC/DC",
   "mediaFileType" : "MP3",
   "categories" : [ {
-    "name" : "Rock"
-  } ]
+    "categoryName" : "Rock"
+  } ],
+  "image" : null
 }, {
   "id" : 3,
-  "name" : "Jazz Song",
-  "filePath" : "jazzsong.mp3",
+  "name" : {
+    "fileName" : "Jazz Song"
+  },
+  "filePath" : {
+    "path" : "jazzsong.mp3"
+  },
   "comment" : "comment",
   "mediaFileType" : "MP3",
   "categories" : [ {
-    "name" : "Jazz"
-  }, {
-    "name" : "New Music"
-  } ]
+    "categoryName" : "Jazz"
+  } ],
+  "image" : null
 }, {
   "id" : 4,
-  "name" : "Classical Song",
-  "filePath" : "classicalsong.mp3",
+  "name" : {
+    "fileName" : "Classical Song"
+  },
+  "filePath" : {
+    "path" : "classicalsong.mp3"
+  },
   "comment" : "classical",
   "mediaFileType" : "MP3",
   "categories" : [ {
-    "name" : "Classical"
-  } ]
+    "categoryName" : "Classical2"
+  } ],
+  "image" : null
+}, {
+  "id" : 5,
+  "name" : {
+    "fileName" : "mpthreetest.mp3"
+  },
+  "filePath" : {
+    "path" : "C:\\TestFolder\\mpthreetest.mp3"
+  },
+  "comment" : "TestComment",
+  "mediaFileType" : "MP3",
+  "categories" : null,
+  "image" : null
 } ]

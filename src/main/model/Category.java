@@ -4,28 +4,28 @@ import java.io.Serializable;
 
 public class Category implements Serializable {
 
-    private String name;
+    private String categoryName;
 
     /**
      * Get category description
      *
      * @return String
      */
-    public String getName() {
-        return name;
+    public String getCategoryName() {
+        return categoryName;
     }
 
     /**
-     * Set category name
-     * @param name name
+     * Set category categoryName
+     * @param categoryName categoryName
      */
-    public void setName(final String name) {
-        this.name = name;
+    public void setCategoryName(final String categoryName) {
+        this.categoryName = categoryName;
     }
 
     @Override
     public String toString() {
-        return name;
+        return categoryName;
     }
 
     @Override
@@ -39,6 +39,6 @@ public class Category implements Serializable {
 
         final Category category = (Category) o;
 
-        return name != null ? name.equals(category.name) : category.name == null;
+        return categoryName != null ? categoryName.equals(category.categoryName) : category.categoryName == null;
     }
 }

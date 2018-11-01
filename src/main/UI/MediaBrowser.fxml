@@ -4,8 +4,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.GridPane?>
+<?import org.controlsfx.glyphfont.Glyph?>
 <VBox fx:controller="main.UI.MediaBrowser"
-      xmlns:fx="http://javafx.com/fxml" stylesheets="@mediaBrowser.css">
+      xmlns:fx="http://javafx.com/fxml" stylesheets="@mediabrowser.css">
     <padding>
         <Insets top="10" bottom="10" left="10" right="10"/>
     </padding>
@@ -13,7 +14,6 @@
     <GridPane hgap="10" vgap="10">
         <!-- First row -->
         <Label style="-fx-font-weight: bold" text="Media Browser" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="searchTextField" visible="false" promptText="Search..." GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
         <!-- Second row -->
         <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
@@ -68,13 +68,21 @@
                                 <padding>
                                     <Insets right="10"/>
                                 </padding>
-                                <Button fx:id="addPlayListButton" text="+"/>
+                                <Button fx:id="addPlayListButton">
+                                    <graphic>
+                                        <Glyph fontFamily="FontAwesome" icon="PLUS" fontSize="10"/>
+                                    </graphic>
+                                </Button>
                             </VBox>
                             <VBox>
                                 <padding>
                                     <Insets right="10"/>
                                 </padding>
-                                <Button fx:id="editPlayListButton" text="#"/>
+                                <Button fx:id="editPlayListButton">
+                                    <graphic>
+                                        <Glyph fontFamily="FontAwesome" icon="SAVE" fontSize="10"/>
+                                    </graphic>
+                                </Button>
                             </VBox>
                             <TextField fx:id="editPlayListTextField"/>
                         </HBox>
@@ -101,13 +109,21 @@
                                 <padding>
                                     <Insets right="10"/>
                                 </padding>
-                                <Button fx:id="addCategoryButton" text="+"/>
+                                <Button fx:id="addCategoryButton">
+                                    <graphic>
+                                        <Glyph fontFamily="FontAwesome" icon="PLUS" fontSize="10"/>
+                                    </graphic>
+                                </Button>
                             </VBox>
                             <VBox>
                                 <padding>
                                     <Insets right="10"/>
                                 </padding>
-                                <Button fx:id="editCategoryButton" text="#"/>
+                                <Button fx:id="editCategoryButton">
+                                    <graphic>
+                                        <Glyph fontFamily="FontAwesome" icon="SAVE" fontSize="10"/>
+                                    </graphic>
+                                </Button>
                             </VBox>
                             <TextField fx:id="editCategoryTextField"/>
                         </HBox>
@@ -115,7 +131,7 @@
                             <columns>
                                 <TableColumn text="Categories" prefWidth="230">
                                     <cellValueFactory>
-                                        <PropertyValueFactory property="name"/>
+                                        <PropertyValueFactory property="categoryName"/>
                                     </cellValueFactory>
                                 </TableColumn>
                             </columns>

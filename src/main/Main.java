@@ -10,7 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("UI/mediaBrowser.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("UI/MediaBrowser.fxml"));
         primaryStage.setTitle("Media Browser");
         primaryStage.setMaxHeight(500);
         primaryStage.setMaxWidth(850);

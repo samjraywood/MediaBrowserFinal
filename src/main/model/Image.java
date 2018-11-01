@@ -2,25 +2,25 @@ package main.model;
 
 public class Image {
 
-    private String fileName;
-    private String filePath;
+    private FileName fileName;
+    private FilePath filePath;
 
     public Image() {
     }
 
-    public String getFileName() {
+    public FileName getFileName() {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
+    public void setFileName(final FileName fileName) {
         this.fileName = fileName;
     }
 
-    public String getFilePath() {
+    public FilePath getFilePath() {
         return filePath;
     }
 
-    public void setFilePath(String filePath) {
+    public void setFilePath(final FilePath filePath) {
         this.filePath = filePath;
     }
 
